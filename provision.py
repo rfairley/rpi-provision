@@ -1,7 +1,9 @@
 from flask import Flask, make_response, url_for, request
+import os
+import subprocess
+
 app = Flask(__name__)
 
-import os
 host_ipaddr=os.environ["RPI_PROVISION_IPADDR"]
 host_port=int(os.environ["RPI_PROVISION_PORT"])
 
@@ -14,6 +16,11 @@ def entry():
 def checkin():
     if request.method == 'POST':
         data = request.get_json()
+        # TODO: remote ipaddr should be passed from the pi rather than implicitly assumed from the http request,
+        # in case there is a router in between.
+        output = subprocess.check_output(["ansible-playbook", "-i", "{},".format(request.remote_addr), "-u", data["ssh_user"], "playbook-rpi-provision.yml"])
+        # TODO: format the output more nicely. For now just prints the raw bytes of the ansible-playbook output.
+        print(output)
         return make_response("Host at {} has checked in, starting provisioning for user {} on port {}...\n".format(request.remote_addr, data["ssh_user"], data["ssh_port"]))
     else:
         return make_response("Send a POST request to check in a host for provisioning.\n")
