@@ -11,3 +11,5 @@ python3 -m venv rpi_provision
 source rpi_provision/bin/activate
 RPI_PROVISION_IPADDR=127.0.0.1 RPI_PROVISION_PORT=5000 python3 provision.py
 ```
+
+Ansible playbooks are derived from examples in http://www.lpenz.org/articles/ansiblerpi/index.html.
